@@ -1,30 +1,40 @@
 require 'pry'
 class CommandLineInterface
     def greeting
-        puts ""
-        puts "Hello! Welcome to the Chord Generator."
-        puts ""
+    puts ""
+    puts "
+        ██████╗██╗  ██╗ ██████╗ ██████╗ ██████╗      ██████╗ ███████╗███╗   ██╗███████╗██████╗  █████╗ ████████╗ ██████╗ ██████╗ 
+        ██╔════╝██║  ██║██╔═══██╗██╔══██╗██╔══██╗    ██╔════╝ ██╔════╝████╗  ██║██╔════╝██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
+        ██║     ███████║██║   ██║██████╔╝██║  ██║    ██║  ███╗█████╗  ██╔██╗ ██║█████╗  ██████╔╝███████║   ██║   ██║   ██║██████╔╝
+        ██║     ██╔══██║██║   ██║██╔══██╗██║  ██║    ██║   ██║██╔══╝  ██║╚██╗██║██╔══╝  ██╔══██╗██╔══██║   ██║   ██║   ██║██╔══██╗
+        ╚██████╗██║  ██║╚██████╔╝██║  ██║██████╔╝    ╚██████╔╝███████╗██║ ╚████║███████╗██║  ██║██║  ██║   ██║   ╚██████╔╝██║  ██║
+         ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝      ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
+                                                                                                                                  
+    "
     end
     def main_menu
+        puts ""
         puts "_________________________________________"
         puts "| Would you like to:                     |"
         puts "|                                        |"
-        puts "| 1 - See a list of scales               |"             
+        puts "| 1 - Scale list                         |"             
         puts "| 2 - Add a new scale                    |"
         puts "| 3 - Generate a chord                   |"
-        puts "| 4 - See a list of the generated chords |"
+        puts "| 4 - List of generated chords           |"
         puts "| 5 - Replace a chord                    |"
         puts "| 6 - Delete all chords                  |"
-        puts "| 7 - Update the name of a scale         |"
-        puts "| 8 - Exit                               |"
+        puts "| 7 - Delete a scale                     |"
+        puts "| 8 - Update the name of a scale         |"
+        puts "| 9 - Exit                               |"
         puts "|________________________________________|"
-
+        puts ""
     end
     def input
         response = gets.chomp
         if response == '1'
             Collection.scales.each do |scale|
-                puts scale.name           
+                puts scale.name
+                puts "--------"          
             end
             main_menu
             input
@@ -35,20 +45,30 @@ class CommandLineInterface
             puts "- Seperate notes with commas, enter 6-7 notes,"
             puts "- do not enter flat(b) notes."
             scale_notes = gets.chomp.upcase.split(",")
-            if scale_notes.count >= 6 && scale_notes.count <= 7
-                new_collection = Collection.create(form: 'scale', name: scale_name)
-                scale_note_ids = []
-                scale_notes.map do |note|
-                    scale_note_ids << Note.find_by({name: note}).id
-                end
-                scale_note_ids.each do |note_id|
-                    CollectionsNote.create(note_id: note_id, collection_id: new_collection.id)
-                end
-                puts "Your chord was added."
-            else               
-                puts 'Oops! You entered the wrong amount of notes. '
+            scale_length = scale_notes.length 
+            all_notes = Note.all.map do |note|
+                note.name
             end
-            
+            valid_notes = scale_notes.select do |note|
+                all_notes.include?(note)  
+            end
+            if valid_notes.length == scale_length
+                if scale_notes.count >= 6 && scale_notes.count <= 7
+                    new_collection = Collection.create(form: 'scale', name: scale_name)
+                    scale_note_ids = []
+                    scale_notes.map do |note|
+                        scale_note_ids << Note.find_by({name: note}).id
+                    end
+                    scale_note_ids.each do |note_id|
+                        CollectionsNote.create(note_id: note_id, collection_id: new_collection.id)
+                    end
+                    puts "#{scale_name} was added to the scale list."
+                else               
+                    puts 'Oops! Your note list was invalid.'
+                end
+            else
+                puts 'Oops! Your note list was invalid.'
+            end
             main_menu    
             input
 
@@ -76,7 +96,7 @@ class CommandLineInterface
                     notes.map do |note|
                         chords_note_hash[:notes] << note.name
                     end
-                    puts chords_note_hash
+                    puts "ID: #{chords_note_hash[:id]}, #{chords_note_hash[:scale]}, #{chords_note_hash[:notes]}"
                 end
             elsif collection_chords.count == 1
                 collection_chord = Collection.find_by({form: 'chord'})
@@ -131,7 +151,7 @@ class CommandLineInterface
             end
             main_menu
             input
-        elsif response == '7'
+        elsif response == '8'
             puts "Enter the scale's name that you would like to change:"
             scale_name = gets.chomp
             if Collection.find_by({name: scale_name})
@@ -145,14 +165,43 @@ class CommandLineInterface
             end
             main_menu
             input
-        elsif response == '8'
-            puts "Thanks for leaving!"
-            
-        else
-            puts "Sorry, I didn't get that."
+        elsif response == '9'
+        puts "
+        ██████╗ ██╗   ██╗███████╗
+        ██╔══██╗╚██╗ ██╔╝██╔════╝
+        ██████╔╝ ╚████╔╝ █████╗  
+        ██╔══██╗  ╚██╔╝  ██╔══╝  
+        ██████╔╝   ██║   ███████╗
+        ╚═════╝    ╚═╝   ╚══════╝
+                                    
+        "
+        
+        elsif response == '7'
+            puts "What's the name of the scale you'd like to delete?"
+            bad_scale = gets.chomp
+            puts "Are you sure you'd like to delete #{bad_scale}?"
+            puts "Enter yes or no:"
+            sure = gets.chomp
+            if sure == "yes"
+                if Collection.find_by({name: bad_scale})
+                    col_id_bad_scale = Collection.find_by({name: bad_scale}).id
+                    CollectionsNote.delete(col_id_bad_scale)
+                    Collection.delete(col_id_bad_scale)
+                    puts "#{bad_scale} has been deleted."
+                else
+                    puts "No scale with that name was found."
+                end
+            else
+                puts "Deletion canceled"
+            end
             main_menu
             input
+        else
+            puts "Sorry, I didn't get that."  
+            main_menu
+            input 
         end
+        
     end
     def generate_chord(scale_string)
         
@@ -191,6 +240,22 @@ class CommandLineInterface
             chord_note_string_array << Note.all.find_by({id: note_id}).name
         end
         created_chord_hash[:notes] = chord_note_string_array
-        puts created_chord_hash      
+        puts "                  
+             ;              
+             ;;
+             ;';.
+             ;  ;;
+             ;   ;;
+             ;    ;;   
+             ;    ;;
+             ;   ;'
+             ;  ' 
+        ,;;;,; 
+        ;;;;;;
+        `;;;;'
+        "       
+        puts " #{created_chord_hash[:scale]}"
+        puts "~~~~~~~~~~~"
+        puts " #{created_chord_hash[:notes][0]}, #{created_chord_hash[:notes][1]}, #{created_chord_hash[:notes][2]}"
     end
 end
