@@ -1,4 +1,8 @@
 require 'pry'
+
+Collection.delete_all
+CollectionsNote.delete_all
+Note.delete_all
 octave = ['A', 'A#', 'B', 'B#', 'C', 'C#', 'D', 'D#', 'E', 'E#', 'F', 'F#', 'G', 'G#']
 
 scales = [

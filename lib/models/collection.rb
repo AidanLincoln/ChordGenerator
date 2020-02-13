@@ -1,7 +1,10 @@
 class Collection < ActiveRecord::Base
     has_many :collections_notes
     has_many :notes, through: :collections_notes
-    def self.all_scales
+    def self.scales
         Collection.where("form = 'scale'")
+    end
+    def self.chords
+        Collection.where("form = 'chord'")
     end
 end
