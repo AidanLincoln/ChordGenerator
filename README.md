@@ -19,6 +19,7 @@ Chord Generator is a Command Line App used for generating random chords within a
 ## Installation
 
 - Download or clone the repository
+- Navigate to the repository using `cd`
 - Type `bundle install` in the terminal
 - Type `rake db:migrate` in the terminal
 - Type `rake db:seed` in the terminal
