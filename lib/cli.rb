@@ -143,7 +143,7 @@ class CommandLineInterface
         elsif response == '6'
             puts "Are you sure you'd like to delete all of the generated chords?"
             puts "Type yes or no:"     
-            positive = gets.chomp
+            positive = gets.chomp.downcase
             if positive == 'yes'
                 if Collection.find_by({form: 'chord'})
                     collection_chord_instances = Collection.where({form: 'chord'})
@@ -155,6 +155,8 @@ class CommandLineInterface
                 else
                     puts "There was nothing to delete!"
                 end
+            else
+                puts "You didn't type yes or no."
             end
             main_menu
             input
@@ -188,7 +190,7 @@ class CommandLineInterface
             bad_scale = gets.chomp
             puts "Are you sure you'd like to delete #{bad_scale}?"
             puts "Enter yes or no:"
-            sure = gets.chomp
+            sure = gets.chomp.downcase
             if sure == "yes"
                 if Collection.find_by({name: bad_scale})
                     col_id_bad_scale = Collection.find_by({name: bad_scale}).id
