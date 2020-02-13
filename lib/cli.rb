@@ -14,23 +14,24 @@ class CommandLineInterface
     end
     def main_menu
         puts ""
-        puts "_________________________________________"
-        puts "| Would you like to:                     |"
-        puts "|                                        |"
-        puts "| 1 - Scale list                         |"             
-        puts "| 2 - Add a new scale                    |"
-        puts "| 3 - Generate a chord                   |"
-        puts "| 4 - List of generated chords           |"
-        puts "| 5 - Replace a chord                    |"
-        puts "| 6 - Delete all chords                  |"
-        puts "| 7 - Delete a scale                     |"
-        puts "| 8 - Update the name of a scale         |"
-        puts "| 9 - Exit                               |"
-        puts "|________________________________________|"
+        puts " _________________________________________"
+        puts " |                 Menu                   |"
+        puts " |----------------------------------------|"
+        puts " | 1 - Scale list                         |"             
+        puts " | 2 - Add a new scale                    |"
+        puts " | 3 - Generate a chord                   |"
+        puts " | 4 - List of generated chords           |"
+        puts " | 5 - Replace a chord                    |"
+        puts " | 6 - Delete all chords                  |"
+        puts " | 7 - Delete a scale                     |"
+        puts " | 8 - Update the name of a scale         |"
+        puts " | 9 - Exit                               |"
+        puts " |________________________________________|"
         puts ""
     end
     def input
         response = gets.chomp
+        puts ""
         if response == '1'
             Collection.scales.each do |scale|
                 puts scale.name
@@ -62,6 +63,7 @@ class CommandLineInterface
                     scale_note_ids.each do |note_id|
                         CollectionsNote.create(note_id: note_id, collection_id: new_collection.id)
                     end
+                    puts ""
                     puts "#{scale_name} was added to the scale list."
                 else               
                     puts 'Oops! Your note list was invalid.'
@@ -96,7 +98,8 @@ class CommandLineInterface
                     notes.map do |note|
                         chords_note_hash[:notes] << note.name
                     end
-                    puts "ID: #{chords_note_hash[:id]}, #{chords_note_hash[:scale]}, #{chords_note_hash[:notes]}"
+                    puts "ID: #{chords_note_hash[:id]}, Scale: #{chords_note_hash[:scale]}, Notes: #{chords_note_hash[:notes]}"
+                    puts "---------------------------------------------------"
                 end
             elsif collection_chords.count == 1
                 collection_chord = Collection.find_by({form: 'chord'})
@@ -108,7 +111,8 @@ class CommandLineInterface
                 notes.map do |note|
                     chords_note_hash[:notes] << note.name
                 end
-                puts chords_note_hash
+                puts "ID: #{chords_note_hash[:id]}, Scale: #{chords_note_hash[:scale]}, Notes: #{chords_note_hash[:notes]}"
+                puts "---------------------------------------------------"
             else
                 puts "No chords have been created!"
             end
@@ -241,21 +245,22 @@ class CommandLineInterface
         end
         created_chord_hash[:notes] = chord_note_string_array
         puts "                  
-             ;              
-             ;;
-             ;';.
-             ;  ;;
-             ;   ;;
-             ;    ;;   
-             ;    ;;
-             ;   ;'
-             ;  ' 
-        ,;;;,; 
-        ;;;;;;
-        `;;;;'
+      ;              ;              ;         
+      ;;             ;;             ;;
+      ;';.           ;';.           ;';.
+      ;  ;;          ;  ;;          ;  ;;
+      ;   ;;         ;   ;;         ;   ;;
+      ;    ;;        ;    ;;        ;    ;;
+      ;    ;;        ;    ;;        ;    ;;
+      ;   ;'         ;   ;'         ;   ;'
+      ;  '           ;  '           ;  '
+ ,;;;,;         ,;;;,;         ,;;;,;
+ ;;;;;;         ;;;;;;         ;;;;;;
+ `;;;;'         `;;;;'         `;;;;'
+        
         "       
-        puts " #{created_chord_hash[:scale]}"
-        puts "~~~~~~~~~~~"
-        puts " #{created_chord_hash[:notes][0]}, #{created_chord_hash[:notes][1]}, #{created_chord_hash[:notes][2]}"
+        puts "                #{created_chord_hash[:scale]}"
+        puts "               ~~~~~~~~~~~"
+        puts "                #{created_chord_hash[:notes][0]}, #{created_chord_hash[:notes][1]}, #{created_chord_hash[:notes][2]}"
     end
 end
