@@ -46,6 +46,9 @@ class CommandLineInterface
             puts "- Seperate notes with commas, enter 6-7 notes,"
             puts "- do not enter flat(b) notes."
             scale_notes = gets.chomp.upcase.split(",")
+            scale_notes = scale_notes.map do |note|
+                note.strip
+            end
             scale_length = scale_notes.length 
             all_notes = Note.all.map do |note|
                 note.name
