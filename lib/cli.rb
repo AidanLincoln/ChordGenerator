@@ -44,6 +44,8 @@ class CommandLineInterface
             scale_name = gets.chomp
             if Collection.find_by(name: scale_name)
                 puts 'That scale already exists!'
+            elsif scale_name.length == 0
+                puts "You didn't enter a valid scale name."
             else
                 puts "What notes are in the scale?"
                 puts "- Seperate notes with commas, enter 6-7 notes,"
