@@ -42,37 +42,41 @@ class CommandLineInterface
         elsif response == '2'
             puts "What's the name of the scale you're creating?"
             scale_name = gets.chomp
-            puts "What notes are in the scale?"
-            puts "- Seperate notes with commas, enter 6-7 notes,"
-            puts "- do not enter flat(b) notes."
-            scale_notes = gets.chomp.upcase.split(",")
-            scale_notes = scale_notes.map do |note|
-                note.strip
-            end
-            scale_length = scale_notes.length 
-            all_notes = Note.all.map do |note|
-                note.name
-            end
-            valid_notes = scale_notes.select do |note|
-                all_notes.include?(note)  
-            end
-            if valid_notes.length == scale_length
-                if scale_notes.count >= 6 && scale_notes.count <= 7
-                    new_collection = Collection.create(form: 'scale', name: scale_name)
-                    scale_note_ids = []
-                    scale_notes.map do |note|
-                        scale_note_ids << Note.find_by({name: note}).id
-                    end
-                    scale_note_ids.each do |note_id|
-                        CollectionsNote.create(note_id: note_id, collection_id: new_collection.id)
-                    end
-                    puts ""
-                    puts "#{scale_name} was added to the scale list."
-                else               
-                    puts 'Oops! Your note list was invalid.'
-                end
+            if Collection.find_by(name: scale_name)
+                puts 'That scale already exists!'
             else
-                puts 'Oops! Your note list was invalid.'
+                puts "What notes are in the scale?"
+                puts "- Seperate notes with commas, enter 6-7 notes,"
+                puts "- do not enter flat(b) notes."
+                scale_notes = gets.chomp.upcase.split(",")
+                scale_notes = scale_notes.map do |note|
+                    note.strip
+                end
+                scale_length = scale_notes.length 
+                all_notes = Note.all.map do |note|
+                    note.name
+                end
+                valid_notes = scale_notes.select do |note|
+                    all_notes.include?(note)  
+                end
+                if valid_notes.length == scale_length
+                    if scale_notes.count >= 6 && scale_notes.count <= 7
+                        new_collection = Collection.create(form: 'scale', name: scale_name)
+                        scale_note_ids = []
+                        scale_notes.map do |note|
+                            scale_note_ids << Note.find_by({name: note}).id
+                        end
+                        scale_note_ids.each do |note_id|
+                            CollectionsNote.create(note_id: note_id, collection_id: new_collection.id)
+                        end
+                        puts ""
+                        puts "#{scale_name} was added to the scale list."
+                    else               
+                        puts 'Oops! Your note list was invalid.'
+                    end
+                else
+                    puts 'Oops! Your note list was invalid.'               
+                end
             end
             main_menu    
             input
@@ -228,6 +232,12 @@ class CommandLineInterface
         index_above = random_note_index + 1
         chord_note_ids << note_id_array[random_note_index]
         note_id_array.delete_at(random_note_index)
+        all_notes_array = Note.all.map do |note|
+            note.name
+        end
+        #if Note.where(id: note_id_array[index_below]).name == all_notes_array[all_notes_array.index(Note.where(id: note_id_array[random_note_index])) - 1]
+        #    note_id_array.delete_at(index_below)
+        #end
         note_id_array.delete_at(index_below)
         note_id_array.delete_at(index_above)
         random_note_index = rand(note_id_array.count)
