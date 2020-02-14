@@ -32,6 +32,10 @@ Chord Generator is a Command Line App used for generating random chords within a
 - If you exit, you must run `ruby bin/run.rb` again to start the program
 - If you want to force reset the program (delete all scales and chords that have been    created), you can run `rake db:seed` again.
 
+## Tutorial Video
+
+(https://youtu.be/vJRbiHjPJC0)
+
 ## License
 
 (https://www.mit.edu/~amini/LICENSE.md)
