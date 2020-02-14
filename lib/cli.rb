@@ -45,7 +45,7 @@ class CommandLineInterface
             if Collection.find_by(name: scale_name)
                 puts 'That scale already exists!'
             elsif scale_name.length == 0
-                puts "You didn't enter a valid scale name."
+                puts "You didn't enter a scale name."
             else
                 puts "What notes are in the scale?"
                 puts "- Seperate notes with commas, enter 6-7 notes,"
@@ -162,22 +162,28 @@ class CommandLineInterface
                     puts "There was nothing to delete!"
                 end
             else
-                puts "You didn't type yes or no."
+                puts "No chords have been deleted."
             end
             main_menu
             input
         elsif response == '8'
             puts "Enter the scale's name that you would like to change:"
             scale_name = gets.chomp
-            if Collection.find_by({name: scale_name})
-                collections_w_same_name = Collection.find_by({name: scale_name})
-                puts "What would you like to change the name to?"
-                new_scale_name = gets.chomp
-                Collection.update(collections_w_same_name.id, :name => new_scale_name)
-                puts "The scale name has been updated."
-            else
-                puts "No scale with that name was found."
-            end
+              
+                if Collection.find_by({name: scale_name})
+                    collections_w_same_name = Collection.find_by({name: scale_name})
+                    puts "What would you like to change the name to?"
+                    new_scale_name = gets.chomp
+                    if new_scale_name.length != 0 
+                        Collection.update(collections_w_same_name.id, :name => new_scale_name)
+                        puts "The scale name has been updated."
+                    else
+                        puts "You can't change the scale name to *blank*."
+                    end
+                else
+                    puts "No scale with that name was found."
+                end
+            
             main_menu
             input
         elsif response == '9'
