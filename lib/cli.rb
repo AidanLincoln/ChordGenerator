@@ -148,7 +148,18 @@ class CommandLineInterface
                 
                     CollectionsNote.where({collection_id: chosen_id}).destroy_all
                     Collection.where({id: chosen_id}).destroy(chosen_id)
-                    generate_chord(scale_of_new_chord)
+                    puts "Which generator model would you like to use?"
+                    puts "--------------------------------------"
+                    puts "1 - (No notes 1 semitone apart)"
+                    puts "2 - (No notes next to eachother in the scale)"
+                    gen_model = gets.chomp
+                    if gen_model == '1'
+                        generate_chord(scale_of_new_chord)
+                    elsif gen_model == '2'
+                        generate_chord_og(scale_of_new_chord)
+                    else
+                        puts "Error, no generator model chosen."
+                    end
                 else
                     puts "The ID you entered is invalid. Please refer to the chord list for a valid ID."
                 end 
