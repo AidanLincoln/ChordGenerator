@@ -87,7 +87,18 @@ class CommandLineInterface
             puts 'Please enter a scale name:'
             scale_string = gets.chomp
             if Collection.all.find_by({name: scale_string})
-                generate_chord(scale_string)
+                puts "Which generator model would you like to use?"
+                puts "--------------------------------------"
+                puts "1 - (No notes 1 semitone apart)"
+                puts "2 - (No notes next to eachother in the scale)"
+                gen_model = gets.chomp
+                if gen_model == '1'
+                    generate_chord(scale_string)
+                elsif gen_model == '2'
+                    generate_chord_og(scale_string)
+                else
+                    puts "Error, no generator model chosen."
+                end
             else
                 puts "Error, no scale with that name was found."
             end
@@ -226,6 +237,103 @@ class CommandLineInterface
     end
     def generate_chord(scale_string)
         
+        scale_instance = Collection.all.find_by({name: scale_string})
+        scales_collections_note = CollectionsNote.where("collection_id = #{scale_instance.id}")
+        note_id_array = scales_collections_note.map do |row|
+            row.note_id
+        end
+        #new collection(chord)
+        new_chord_collection = Collection.create(form: 'chord', name: scale_string)
+        #UGLY but ok, this generates an array of 3 note id's (a chord)
+        chord_note_ids = []
+        all_notes_array = Note.all.map do |note|
+            note.name
+        end
+        #semitonal condition testing
+        random_note_index = rand(note_id_array.count)
+        random_note = note_id_array[random_note_index]
+        index_below = note_id_array[random_note_index - 1]
+        index_above = note_id_array[random_note_index + 1]
+        chord_note_ids << note_id_array[random_note_index]
+        semitone_below = all_notes_array[all_notes_array.find_index(Note.where(id: random_note)[0].name) - 1]
+        semitone_above = all_notes_array[all_notes_array.find_index(Note.where(id: random_note)[0].name) + 1]
+        #dealing with the random note being G#
+        if semitone_above == nil
+            semitone_above = 'A'
+        end
+        if index_above == nil
+            index_above = note_id_array[0]
+        end
+        
+        if Note.where(id: index_below)[0].name == semitone_below
+            note_id_array.delete(index_below)
+        end
+        if Note.where(id: index_above)[0].name == semitone_above
+            note_id_array.delete(index_above)
+        end
+        note_id_array.delete(random_note)
+
+        #note_id_array.delete(index_below)
+        #note_id_array.delete(index_above)
+        random_note_index = rand(note_id_array.count)
+        random_note = note_id_array[random_note_index]
+        index_below = note_id_array[random_note_index - 1]
+        index_above = note_id_array[random_note_index + 1]
+        chord_note_ids << note_id_array[random_note_index]
+        semitone_below = all_notes_array[all_notes_array.find_index(Note.where(id: random_note)[0].name) - 1]
+        semitone_above = all_notes_array[all_notes_array.find_index(Note.where(id: random_note)[0].name) + 1]
+        #deals with G# again
+        if semitone_above == nil
+            semitone_above = 'A'
+        end
+        if index_above == nil
+            index_above = note_id_array[0]
+        end
+
+        if Note.where(id: index_below)[0].name == semitone_below
+            note_id_array.delete(index_below)
+        end
+        if Note.where(id: index_above)[0].name == semitone_above
+            note_id_array.delete(index_above)
+        end
+        note_id_array.delete(random_note)
+        #note_id_array.delete(index_below)
+        #note_id_array.delete(index_above)
+        random_note_index = rand(note_id_array.count)
+        chord_note_ids << note_id_array[random_note_index]
+        #new Collections_note rows
+        chord_note_ids.each do |noteid|
+            CollectionsNote.create(note_id: noteid, collection_id: new_chord_collection.id)
+        end
+        #return an array of notes in the chord, and what scale its in
+        created_chord_hash = {}
+        created_chord_hash[:scale] = scale_string
+        chord_note_string_array = []
+        chord_note_ids.each do |note_id|
+            chord_note_string_array << Note.all.find_by({id: note_id}).name
+        end
+        created_chord_hash[:notes] = chord_note_string_array
+        puts "                  
+      ;              ;              ;         
+      ;;             ;;             ;;
+      ;';.           ;';.           ;';.
+      ;  ;;          ;  ;;          ;  ;;
+      ;   ;;         ;   ;;         ;   ;;
+      ;    ;;        ;    ;;        ;    ;;
+      ;    ;;        ;    ;;        ;    ;;
+      ;   ;'         ;   ;'         ;   ;'
+      ;  '           ;  '           ;  '
+ ,;;;,;         ,;;;,;         ,;;;,;
+ ;;;;;;         ;;;;;;         ;;;;;;
+ `;;;;'         `;;;;'         `;;;;'
+        
+        "       
+        puts "                #{created_chord_hash[:scale]}"
+        puts "               ~~~~~~~~~~~"
+        puts "                #{created_chord_hash[:notes][0]}, #{created_chord_hash[:notes][1]}, #{created_chord_hash[:notes][2]}"
+    end
+
+    def generate_chord_og(scale_string)
         scale_instance = Collection.all.find_by({name: scale_string})
         scales_collections_note = CollectionsNote.where("collection_id = #{scale_instance.id}")
         note_id_array = scales_collections_note.map do |row|

@@ -9,7 +9,7 @@ Chord Generator is a Command Line App used for generating random chords within a
 
 - See a list of scales 
 - Add a new scale to the program
-- Generate a new chord
+- Generate a new chord using one of two generation models
 - See a list of generated chords
 - Replace a chord with a new one from the same scale
 - Delete all chords that have been created
