@@ -21,11 +21,12 @@ class CommandLineInterface
         puts " | 2 - Add a new scale                    |"
         puts " | 3 - Generate a chord                   |"
         puts " | 4 - List of generated chords           |"
-        puts " | 5 - Replace a chord                    |"
-        puts " | 6 - Delete all chords                  |"
-        puts " | 7 - Delete a scale                     |"
-        puts " | 8 - Update the name of a scale         |"
-        puts " | 9 - Exit                               |"
+        puts " | 5 - Notes in a scale                   |"
+        puts " | 6 - Replace a chord                    |"
+        puts " | 7 - Delete all chords                  |"
+        puts " | 8 - Delete a scale                     |"
+        puts " | 9 - Update the name of a scale         |"
+        puts " | 0 - Exit                               |"
         puts " |________________________________________|"
         puts ""
     end
@@ -106,8 +107,7 @@ class CommandLineInterface
             input
 
         elsif response == '4'  
-            collection_chords = Collection.where({form: 'chord'})
-            
+            collection_chords = Collection.where({form: 'chord'})         
             if collection_chords.length > 1
                 collection_chords.each do |collection_obj|
                     chords_note_hash = {}
@@ -138,7 +138,31 @@ class CommandLineInterface
             end
             main_menu
             input
+        
         elsif response == '5'
+            puts "What scale's notes would you like to see?"
+            desired_scale = gets.chomp
+            if desired_scale.length == 0 || !Collection.find_by(name: desired_scale)
+                puts "That scale doesn't exist."
+            else 
+                scale_id = Collection.where(name: desired_scale, form: 'scale')
+                notes_in_scale = CollectionsNote.where(collection_id: scale_id)
+                notes_str_array = []
+                notes_id_array = []
+                notes_in_scale.map do |noteobj|
+                    notes_id_array << noteobj.note_id
+                end
+                notes_id_array.map do |note|
+                    notes_str_array << Note.where(id: note)[0].name
+                end
+                scale_hash = {}
+                scale_hash[:notes] = notes_str_array
+                puts "Notes: #{scale_hash[:notes]}"
+            end
+            main_menu
+            input
+
+        elsif response == '6'
             puts "Enter the ID of the chord you'd like to replace."
             chosen_id = gets.chomp
             if Collection.find_by({id: chosen_id}) 
@@ -168,7 +192,8 @@ class CommandLineInterface
             end
             main_menu
             input
-        elsif response == '6'
+
+        elsif response == '7'
             puts "Are you sure you'd like to delete all of the generated chords?"
             puts "Type yes or no:"     
             positive = gets.chomp.downcase
@@ -188,7 +213,8 @@ class CommandLineInterface
             end
             main_menu
             input
-        elsif response == '8'
+
+        elsif response == '9'
             puts "Enter the scale's name that you would like to change:"
             scale_name = gets.chomp
               
@@ -204,11 +230,11 @@ class CommandLineInterface
                     end
                 else
                     puts "No scale with that name was found."
-                end
-            
+                end     
             main_menu
             input
-        elsif response == '9'
+
+        elsif response == '0'
         puts "
         ██████╗ ██╗   ██╗███████╗
         ██╔══██╗╚██╗ ██╔╝██╔════╝
@@ -219,7 +245,7 @@ class CommandLineInterface
                                     
         "
         
-        elsif response == '7'
+        elsif response == '8'
             puts "What's the name of the scale you'd like to delete?"
             bad_scale = gets.chomp
             puts "Are you sure you'd like to delete #{bad_scale}?"
@@ -233,6 +259,7 @@ class CommandLineInterface
                     puts "#{bad_scale} has been deleted."
                 else
                     puts "No scale with that name was found."
+
                 end
             else
                 puts "Deletion canceled"
@@ -242,9 +269,8 @@ class CommandLineInterface
         else
             puts "Sorry, I didn't get that."  
             main_menu
-            input 
+            input
         end
-        
     end
     def generate_chord(scale_string)
         
